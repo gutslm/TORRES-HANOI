@@ -1,0 +1,149 @@
+#include <iostream>
+using namespace std;
+
+const int LIMITE_A = 7;
+
+void menu();
+void DibujarJuego(int pilaA[], int cant1, int pilaB[], int cant2, int pilaC[], int cant3);
+void MeterAro(int columna[], int valor, int &pos);
+int SacarAro(int columna[], int &pos);
+int VerAroArriba(int columna[], int pos);
+bool SinAros(int pos);
+
+int main()
+{
+    int pilaA[LIMITE_A];
+    int pilaB[LIMITE_A];
+    int pilaC[LIMITE_A];
+
+    int cant1 = 0, cant2 = 0, cant3 = 0;
+    int jugadas = 0;
+    int deDonde, aDonde;
+
+    for (int elem = LIMITE_A; elem >= 1; elem--)
+    {
+        MeterAro(pilaA, elem, cant1);
+    }
+
+    menu();
+
+    while (cant3 < LIMITE_A)
+    {
+        DibujarJuego(pilaA, cant1, pilaB, cant2, pilaC, cant3);
+
+        cout << "\nMovimientos intentados: " << jugadas << endl;
+        cout << "Selecciona torre de ORIGEN (1, 2 o 3) [0 para salir we]: ";
+        cin >> deDonde;
+
+        if (deDonde == 0)
+        {
+            cout << "\nADIOS WE, TE RENDISTE ALV\n";
+            return 0;
+        }
+
+        cout << "Selecciona torre de DESTINO (1, 2 o 3): ";
+        cin >> aDonde;
+
+        jugadas++;
+
+        if (deDonde < 1 || deDonde > 3 || aDonde < 1 || aDonde > 3 || deDonde == aDonde)
+        {
+            cout << "\n>> ESTA OPCION NO EXISTE WE\n";
+            continue;
+        }
+
+        int piezaActual = 0;
+        if (deDonde == 1) piezaActual = VerAroArriba(pilaA, cant1);
+        else if (deDonde == 2) piezaActual = VerAroArriba(pilaB, cant2);
+        else if (deDonde == 3) piezaActual = VerAroArriba(pilaC, cant3);
+
+        if (piezaActual == 0)
+        {
+            cout << "\n>> NO HAY AROS EN ESA TORRE WE\n";
+            continue;
+        }
+
+        int piezaBase = 0;
+        if (aDonde == 1) piezaBase = VerAroArriba(pilaA, cant1);
+        else if (aDonde == 2) piezaBase = VerAroArriba(pilaB, cant2);
+        else if (aDonde == 3) piezaBase = VerAroArriba(pilaC, cant3);
+
+        if (piezaBase != 0 && piezaActual > piezaBase)
+        {
+            cout << "\n>> MOVIMIENTO INVALIDO: No puedes poner el aro " << piezaActual 
+                 << " sobre uno menor (" << piezaBase << ")\n";
+            cout << ">> LA PIEZA NO SE MOVIO WE.\n";
+        }
+        else
+        {
+            int piezaMovida = 0;
+
+            if (deDonde == 1) piezaMovida = SacarAro(pilaA, cant1);
+            else if (deDonde == 2) piezaMovida = SacarAro(pilaB, cant2);
+            else if (deDonde == 3) piezaMovida = SacarAro(pilaC, cant3);
+
+            if (aDonde == 1) MeterAro(pilaA, piezaMovida, cant1);
+            else if (aDonde == 2) MeterAro(pilaB, piezaMovida, cant2);
+            else if (aDonde == 3) MeterAro(pilaC, piezaMovida, cant3);
+
+            cout << "\n>> MOVIMIENTO CORRECTO: Moviste el aro " << piezaMovida 
+                 << " de Torre " << deDonde << " a Torre " << aDonde << "!\n";
+        }
+    }
+
+    DibujarJuego(pilaA, cant1, pilaB, cant2, pilaC, cant3);
+    cout << "          GANASTE WE! FELICIDADES        \n";
+    cout << "     MOVIMIENTOS REALIZADOS: " << jugadas << endl;
+
+    return 0;
+}
+
+void menu()
+{
+    cout << "\n JUEGO DE LAS TORRES DE HANOI \n";
+    cout << "Reglas we:\n";
+    cout << "1. El objetivo es mover los 7 aros de la Torre 1 a la Torre 3.\n";
+    cout << "2. Solo puedes mover 1 aro a la vez (el de la cima).\n";
+    cout << "3. Un aro mayor NO puede ser colocado sobre uno menor.\n";
+}
+
+void MeterAro(int columna[], int valor, int &pos)
+{
+    columna[pos] = valor;
+    pos++;
+}
+
+int SacarAro(int columna[], int &pos)
+{
+    pos--;
+    int valor = columna[pos];
+    return valor;
+}
+
+int VerAroArriba(int columna[], int pos)
+{
+    if (pos == 0) return 0;
+    return columna[pos - 1];
+}
+
+bool SinAros(int pos)
+{
+    return (pos == 0);
+}
+
+void DibujarJuego(int pilaA[], int cant1, int pilaB[], int cant2, int pilaC[], int cant3)
+{
+    cout << "\n ESTADO ACTUAL \n";
+    for (int i = LIMITE_A - 1; i >= 0; i--)
+    {
+        cout << "  ";
+        if (i < cant1) cout << pilaA[i];
+        cout << "\t\t";
+        if (i < cant2) cout << pilaB[i];
+        cout << "\t\t";
+        if (i < cant3) cout << pilaC[i];
+        cout << endl;
+    }
+    cout << "Torre 1 \tTorre 2\t\tTorre 3\n";
+}
+return 0; 
